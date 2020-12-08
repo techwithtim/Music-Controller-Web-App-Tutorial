@@ -3,6 +3,7 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
+  background: linear-gradient(to left, red, blue);
 }
 
 #main {
@@ -26,4 +27,5 @@ body {
   box-shadow: 0 15px 15px rgba(0, 0, 0, 0.2), 0px 0px 15px gray;
   padding: 30px;
   border-radius: 20px;
+  background: white;
 }
