@@ -17,14 +17,12 @@ export default class HomePage extends Component {
     this.state = {
       roomCode: null,
     };
+
+    // bind methods
+    this.clearRoomCode = this.clearRoomCode.bind(this);
   }
 
-  // LifeCycle method called asynchronously once the page is rendered.
-  // But if we set the state (beacuse user has a code) the component will be rerendered
-  // So in the render we can decide to redirect the user if the code is not null
   async componentDidMount() {
-    // if the user is already in a room I will redirect in the room and not in the homepage
-    // To do this I set the room code by fetching it in the API (it can be also None)
     fetch("/api/user-in-room")
       .then((response) => response.json())
       .then((data) => {
@@ -56,6 +54,15 @@ export default class HomePage extends Component {
     );
   }
 
+  // When the user is redirected to the HomePage it means that the room is left.
+  // If the user is the host than also the room is cancelled.
+  // So here the state mantains the code of a cancelled room, so the child component (Room) need to modify the state of its parent
+  clearRoomCode() {
+    this.setState({
+      roomCode: null,
+    });
+  }
+
   render() {
     return (
       <Router>
@@ -73,7 +80,15 @@ export default class HomePage extends Component {
           />
           <Route path="/join" component={RoomJoinPage} />
           <Route path="/create" component={CreateRoomPage} />
-          <Route path="/room/:roomCode" component={Room} />
+          <Route
+            path="/room/:roomCode"
+            // props are given by the route
+            render={(props) => { 
+              // we return a Room with the props but also a callback prop.
+              // with the callback a child component can modify the parent
+              return <Room {...props} leaveRoomCallback={this.clearRoomCode} />;
+            }}
+          />
         </Switch>
       </Router>
     );

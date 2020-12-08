@@ -109,3 +109,21 @@ class UserInRoom(APIView):
             'code': self.request.session.get('room_code')
         }
         return JsonResponse(data, status=status.HTTP_200_OK)
+
+# When a user want to leave a room it is redirected to the home page.
+# However the homepage redirect the user to the room because the user has the room code in its session.
+# So we need to remove this code
+# Also if the user is the host than we need to shut down the room
+class LeaveRoom(APIView):
+    def post(self, request, format=None):
+        # if user has a room code in his session
+        if 'room_code' in self.request.session:
+            self.request.session.pop('room_code')
+            # check if the user is the host
+            host_id = self.request.session.session_key
+            room_results = Room.objects.filter(host=host_id)
+            if len(room_results) > 0:
+                room = room_results[0]
+                room.delete()
+
+        return Response({'Message': 'Successfully left room'}, status=status.HTTP_200_OK)
