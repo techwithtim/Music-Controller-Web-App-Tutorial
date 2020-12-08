@@ -7,5 +7,5 @@ I added comments in crucial points of this app so you can understand better them
 ## Also it has some styling
 I love restyle websites and I give some little restyles to the app.
 
-# New features
+## New features
 Lately in the serires I will apply a lot more updates and make create some features. Let me know your ideas.
