@@ -15,7 +15,7 @@ export default class RoomJoinPage extends Component {
 
   render() {
     return (
-      <Grid container spacing={1}>
+      <Grid container spacing={3}>
         <Grid item xs={12} align="center">
           <Typography variant="h4" component="h4">
             Join a Room
