@@ -8,6 +8,13 @@ from django.http import JsonResponse
 
 
 '''
+The views in django are the controllers of the model view controller pattern.
+So they are not thought to render the UI, they are meant to explicit the logic of the UI
+Templates are meant to render the view. React in this case is the view.
+'''
+
+
+'''
 TODO:
     - Create a method to check if the user does not have an active session and create one
 ''' 
