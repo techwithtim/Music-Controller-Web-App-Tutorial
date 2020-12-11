@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework import generics, status
-from .serializers import RoomSerializer, CreateRoomSerializer
+from .serializers import RoomSerializer, CreateRoomSerializer, UpdateRoomSerializer
 from .models import Room
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -41,6 +41,7 @@ class GetRoom(APIView):
                 # create is_host as new key of the serializer
                 # it contains if the session of the user is the key of the host of the room
                 # so the view knows if the user that requested is the host
+                print("jjfhajhfjahjfhajfhjafjajfha",self.request.session.session_key == room[0].host)
                 data['is_host'] = self.request.session.session_key == room[0].host
                 return Response(data, status=status.HTTP_200_OK)
             return Response({'Room Not Found': 'Invalid Room Code...'}, status=status.HTTP_400_BAD_REQUEST)
@@ -129,8 +130,45 @@ class LeaveRoom(APIView):
             # check if the user is the host
             host_id = self.request.session.session_key
             room_results = Room.objects.filter(host=host_id)
+            # better queryset.exists()
             if len(room_results) > 0:
                 room = room_results[0]
                 room.delete()
 
         return Response({'Message': 'Successfully left room'}, status=status.HTTP_200_OK)
+
+
+# Similar to create view but don't use it because in future:
+#   - We may want to some user can have multiple rooms and we want to specify the room we want to update
+#   - The host may want to make a user as an admin
+class UpdateRoom(APIView):
+    serializer_class = UpdateRoomSerializer
+    # patch = update
+    def patch(self, request, format=None):
+        # check if the user does not have an active session and create one
+        if not self.request.session.exists(self.request.session.session_key):
+            self.request.session.create()
+        
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            code = serializer.data.get('code')
+            guest_can_pause = serializer.data.get('guest_can_pause')
+            votes_to_skip = serializer.data.get('votes_to_skip')
+            # search the room with the code passed in patch request
+            queryset = Room.objects.filter(code=code)
+            if not queryset.exists():
+                return Response({'error': 'Room not found'}, status=status.HTTP_404_NOT_FOUND)
+            
+            room = queryset[0]
+            # check if the user updating is the host of the room
+            user_id = self.request.session_key
+            if room.host != user_id:
+                return Response({'error': 'You are not the host of the room'}, status=status.HTTP_403_FORBIDDEN)
+
+            room.guest_can_pause = guest_can_pause
+            room.votes_to_skip = votes_to_skip
+            room.save(update_fields=['guest_can_pause', 'votes_to_skip'])
+            return Response(RoomSerializer(room).data, status=status.HTTP_200_OK)
+
+
+        return Response({'Bad Request': "Invalid Data"}, status=status.HTTP_400_BAD_REQUEST)

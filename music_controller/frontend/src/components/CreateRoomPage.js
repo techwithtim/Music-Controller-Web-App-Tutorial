@@ -10,6 +10,8 @@ import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 
+
+// used also to update a room
 export default class CreateRoomPage extends Component {
   defaultVotes = 2;
 
