@@ -20,6 +20,13 @@ TODO:
 ''' 
 
 
+# method that check if the user does not have an active session and create one.
+# It will be put before after every method that needs to check the user session
+def check_has_session_or_create(session):
+    if not session.exists(session.session_key):
+           session.create()   
+
+
 class RoomView(generics.ListAPIView):
     queryset = Room.objects.all()
     serializer_class = RoomSerializer
@@ -54,9 +61,7 @@ class JoinRoom(APIView):
     lookup_url_kwarg = 'code'
 
     def post(self, request, format=None):
-        # check if the user does not have an active session and create one
-        if not self.request.session.exists(self.request.session.session_key):
-            self.request.session.create()
+        check_has_session_or_create(self.request.session)
 
         code = request.data.get(self.lookup_url_kwarg)
         if code != None:
@@ -77,9 +82,7 @@ class CreateRoomView(APIView):
     serializer_class = CreateRoomSerializer
 
     def post(self, request, format=None):
-        # check if the user does not have an active session and create one
-        if not self.request.session.exists(self.request.session.session_key):
-            self.request.session.create()
+        check_has_session_or_create(self.request.session)
 
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
@@ -108,10 +111,9 @@ class CreateRoomView(APIView):
 
 # I want to check if a user is already in a room 
 class UserInRoom(APIView):
+
     def get(self, request, format=None):
-        # check if the user does not have an active session and create one
-        if not self.request.session.exists(self.request.session.session_key):
-            self.request.session.create()
+        check_has_session_or_create(self.request.session)
 
         data = {
             'code': self.request.session.get('room_code')
@@ -143,11 +145,10 @@ class LeaveRoom(APIView):
 #   - The host may want to make a user as an admin
 class UpdateRoom(APIView):
     serializer_class = UpdateRoomSerializer
+
     # patch = update
     def patch(self, request, format=None):
-        # check if the user does not have an active session and create one
-        if not self.request.session.exists(self.request.session.session_key):
-            self.request.session.create()
+        check_has_session_or_create(self.request.session)
         
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
