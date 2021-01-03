@@ -35,7 +35,7 @@ Next install all dependicies.
 npm i
 ```
 
-###Compile the Front-End
+### Compile the Front-End
 
 Run the production compile script
 ```bash
