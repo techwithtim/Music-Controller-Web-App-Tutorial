@@ -2,14 +2,14 @@
 
 The code for Tech With Tim's "Django & React Full Stack Web App Tutorial" series.
 
-##Setup Instructions
+## Setup Instructions
 
-###Install Required Python Modules
+### Install Required Python Modules
 
 ```bash
 pip install -r requirements.txt
 ```
-###Start Web Server
+### Start Web Server
 
 To start the web server you need to run the following sequence of commands.
 
@@ -22,9 +22,9 @@ Next run the django web server.
 python manage.py runserver
 ```
 
-###[Install Node.js](https://nodejs.org/en/)
+### [Install Node.js](https://nodejs.org/en/)
 
-###Install Node Modules
+### Install Node Modules
 
 First cd into the ```frontend``` folder.
 ```bash
