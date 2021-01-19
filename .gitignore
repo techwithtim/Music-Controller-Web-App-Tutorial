@@ -1,2 +1,4 @@
 .node
-/__pycahce__
+node_modules/
+__pycache__/
+
